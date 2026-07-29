@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ff7a00">
+    <meta name="color-scheme" content="light dark">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Inter">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Inter">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+    <title>Inter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --inter-orange: #ff7a00;
+            --inter-orange-dark: #e66e00;
+            --border-color: #e0e0e0;
+            --input-bg: #f0f0f0;
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-strong: 0 4px 16px rgba(0,0,0,0.12);
+            --success-green: #00c853;
+            --btn-disabled: #cccccc;
+            --line-color: #d0d0d0;
+            --warning-bg: #fff3cd;
+            --warning-text: #856404;
+            --warning-icon: #ffc107;
+            --header-height: 60px;
+            --nav-height: 65px;
+            --btn-continuar-height: 54px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0d0d0d;
+                --card-bg: #1e1e1e;
+                --text-primary: #ffffff;
+                --text-secondary: #a0a0a0;
+                --border-color: #333333;
+                --input-bg: #2c2c2c;
+                --modal-overlay: rgba(0, 0, 0, 0.8);
+                --shadow: 0 2px 8px rgba(0,0,0,0.3);
+                --shadow-strong: 0 4px 16px rgba(0,0,0,0.5);
+                --btn-disabled: #444444;
+                --line-color: #2a2a2a;
+                --warning-bg: #3d3418;
+                --warning-text: #e6c87a;
+            }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+        html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+        body { background-color: var(--bg-color); color: var(--text-primary); height: 100dvh; width: 100%; display: flex; flex-direction: column; }
+        header { padding: clamp(10px, 2.5vw, 14px) clamp(14px, 3.5vw, 18px); display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-color); z-index: 100; flex-shrink: 0; min-height: var(--header-height); }
+        .header-left { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: clamp(13px, 3.5vw, 15px); cursor: pointer; flex: 1; min-width: 0; }
+        .avatar-small { width: clamp(30px, 8.5vw, 36px); height: clamp(30px, 8.5vw, 36px); background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: clamp(11px, 2.8vw, 13px); overflow: hidden; flex-shrink: 0; }
+        .avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+        .header-icons { display: flex; gap: clamp(12px, 3.5vw, 18px); font-size: clamp(17px, 4.8vw, 20px); color: var(--text-primary); flex-shrink: 0; }
+        .header-icons i { cursor: pointer; transition: opacity 0.2s; }
+        .header-icons i:active { opacity: 0.6; }
+        main { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-height) + 12px); scrollbar-width: none; min-height: 0; -webkit-overflow-scrolling: touch; }
+        main::-webkit-scrollbar { display: none; }
+        .screen { display: none; min-height: 100%; animation: fadeIn 0.25s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .search-bar { margin: clamp(10px, 2.5vw, 16px) clamp(14px, 3.5vw, 18px); background-color: var(--card-bg); border-radius: 25px; padding: clamp(10px, 2.5vw, 13px) clamp(16px, 4vw, 22px); display: flex; align-items: center; gap: 10px; color: var(--text-secondary); box-shadow: var(--shadow); font-size: clamp(13px, 3.4vw, 14px); }
+        .balance-section { padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); cursor: pointer; }
+        .balance-label { font-size: clamp(12px, 3.2vw, 14px); color: var(--text-secondary); margin-bottom: 4px; }
+        .balance-value { font-size: clamp(24px, 7.5vw, 32px); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .quick-actions { display: flex; gap: clamp(8px, 2vw, 10px); padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); overflow-x: auto; scrollbar-width: none; }
+        .quick-actions::-webkit-scrollbar { display: none; }
+        .btn-action { background-color: var(--inter-orange); color: white; border: none; padding: clamp(10px, 2.5vw, 12px) clamp(16px, 4vw, 22px); border-radius: 22px; font-weight: 600; font-size: clamp(13px, 3.4vw, 14px); white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform 0.15s; }
+        .btn-action:active { transform: scale(0.96); }
+        .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(10px, 2.8vw, 14px); padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); }
+        .menu-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; }
+        .menu-icon { width: clamp(44px, 12.5vw, 52px); height: clamp(44px, 12.5vw, 52px); background-color: var(--card-bg); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 5vw, 22px); box-shadow: var(--shadow); position: relative; }
+        .badge-new { position: absolute; top: -5px; right: -5px; background-color: var(--inter-orange); color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+        .menu-text { font-size: clamp(10px, 2.7vw, 12px); line-height: 1.2; }
+        .feed-card { background-color: var(--card-bg); margin: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); border-radius: 14px; padding: clamp(12px, 3vw, 16px); box-shadow: var(--shadow); }
+        .feed-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .feed-avatar { width: clamp(34px, 9.5vw, 40px); height: clamp(34px, 9.5vw, 40px); background-color: var(--inter-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: clamp(14px, 3.8vw, 16px); flex-shrink: 0; }
+        .feed-info h4 { font-size: clamp(13px, 3.4vw, 14px); display: flex; align-items: center; gap: 4px; }
+        .feed-info span { font-size: clamp(11px, 2.9vw, 12px); color: var(--text-secondary); }
+        .verified { color: var(--inter-orange); font-size: 11px; }
+        .feed-content { font-size: clamp(13px, 3.4vw, 14px); margin-bottom: 12px; line-height: 1.4; }
+        .feed-actions { display: flex; gap: 20px; color: var(--text-secondary); font-size: clamp(12px, 3.2vw, 13px); }
+        .coupon-banner { margin: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); background: linear-gradient(135deg, #ff9d00, #ffb347); border-radius: 14px; padding: clamp(14px, 3.5vw, 18px); color: white; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
+        .coupon-star { font-size: 60px; opacity: 0.3; position: absolute; left: -10px; bottom: -10px; }
+        .coupon-text h3 { font-size: clamp(15px, 4.2vw, 18px); margin-bottom: 4px; }
+        .coupon-text p { font-size: clamp(11px, 2.9vw, 12px); opacity: 0.95; margin-bottom: 10px; }
+        .btn-simular { background-color: white; color: var(--inter-orange); border: none; padding: 7px 18px; border-radius: 18px; font-weight: bold; font-size: 12px; }
+        .extra-features { display: flex; gap: clamp(10px, 2.8vw, 14px); padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); }
+        .feature-box { flex: 1; background-color: var(--card-bg); padding: clamp(12px, 3vw, 14px); border-radius: 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; }
+        .feature-icon { font-size: 22px; }
+        .feature-title { font-size: clamp(13px, 3.4vw, 14px); font-weight: bold; }
+        .feature-desc { font-size: clamp(11px, 2.9vw, 12px); color: var(--text-secondary); }
+        .help-center { margin: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); background-color: var(--card-bg); padding: clamp(12px, 3vw, 14px); border-radius: 14px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+        .pix-options { padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); display: flex; flex-direction: column; gap: 10px; }
+        .pix-btn-large { background-color: var(--card-bg); padding: clamp(14px, 3.5vw, 18px); border-radius: 14px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: clamp(14px, 3.8vw, 16px); box-shadow: var(--shadow); cursor: pointer; }
+        .pix-grid { display: flex; gap: clamp(10px, 2.8vw, 14px); padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); overflow-x: auto; scrollbar-width: none; }
+        .pix-grid::-webkit-scrollbar { display: none; }
+        .pix-item { display: flex; flex-direction: column; align-items: center; min-width: 65px; gap: 6px; text-align: center; }
+        .pix-circle { width: clamp(44px, 12vw, 50px); height: clamp(44px, 12vw, 50px); background-color: rgba(255, 122, 0, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--inter-orange); font-size: clamp(18px, 5vw, 20px); }
+        .pix-label { font-size: clamp(10px, 2.7vw, 11px); line-height: 1.2; }
+        .promo-cards { display: flex; gap: 10px; padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); }
+        .promo-card { flex: 1; background-color: var(--card-bg); border-radius: 14px; padding: clamp(12px, 3vw, 14px); box-shadow: var(--shadow); }
+        .security-box { margin: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); background-color: var(--card-bg); padding: clamp(12px, 3vw, 14px); border-radius: 14px; box-shadow: var(--shadow); }
+        .toggle-switch { position: relative; display: inline-block; width: clamp(36px, 10vw, 42px); height: clamp(18px, 5vw, 22px); float: right; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: clamp(14px, 4vw, 18px); width: clamp(14px, 4vw, 18px); left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--inter-orange); }
+        input:checked + .slider:before { transform: translateX(clamp(18px, 5vw, 20px)); }
+        .pix-flow-container { padding: 0 clamp(14px, 3.5vw, 18px); display: flex; flex-direction: column; min-height: calc(100dvh - var(--header-height) - var(--nav-height) - var(--btn-continuar-height) - 20px); }
+        .pix-input-wrapper { position: relative; margin-bottom: clamp(12px, 3vw, 16px); }
+        .pix-input-special { width: 100%; padding: clamp(14px, 3.5vw, 16px) clamp(40px, 11vw, 48px) clamp(14px, 3.5vw, 16px) clamp(14px, 3.5vw, 16px); border-radius: 12px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-primary); font-size: clamp(15px, 4vw, 16px); outline: none; }
+        .pix-input-special:focus { border-color: var(--inter-orange); }
+        .btn-colar { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--inter-orange); font-weight: bold; font-size: clamp(13px, 3.4vw, 14px); cursor: pointer; background: none; border: none; }
+        .btn-clear-input { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--inter-orange); font-size: clamp(16px, 4.5vw, 18px); cursor: pointer; background: none; border: none; display: none; }
+        .list-group { margin-top: 10px; flex: 1; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: clamp(14px, 3.5vw, 16px) 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item-left { display: flex; align-items: center; gap: 14px; }
+        .list-item i.icon-left { font-size: clamp(18px, 5vw, 20px); }
+        .list-item span { font-size: clamp(15px, 4vw, 16px); font-weight: 500; }
+        .list-item i.fa-chevron-right { color: var(--inter-orange); font-size: clamp(13px, 3.4vw, 14px); }
+        .pix-confirm-screen { text-align: center; padding-top: clamp(12px, 3vw, 16px); flex: 1; display: flex; flex-direction: column; }
+        .warning-box { background-color: var(--warning-bg); color: var(--warning-text); padding: clamp(12px, 3vw, 14px); border-radius: 12px; font-size: clamp(12px, 3.2vw, 13px); text-align: left; display: flex; gap: 10px; align-items: flex-start; margin-top: auto; margin-bottom: clamp(12px, 3vw, 16px); line-height: 1.4; }
+        .warning-box i { color: var(--warning-icon); margin-top: 2px; flex-shrink: 0; }
+        .pix-details-screen { padding: 10px 0; display: flex; flex-direction: column; }
+        .detail-row { display: flex; justify-content: space-between; padding: clamp(10px, 2.5vw, 12px) 0; border-bottom: 1px dotted var(--line-color); align-items: center; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: clamp(13px, 3.4vw, 14px); color: var(--text-secondary); }
+        .detail-value { font-size: clamp(13px, 3.4vw, 14px); font-weight: 600; text-align: right; max-width: 60%; word-wrap: break-word; }
+        .section-title { font-size: clamp(15px, 4vw, 17px); font-weight: bold; margin: clamp(12px, 3vw, 16px) 0 clamp(8px, 2vw, 12px); }
+        .edit-icon { color: var(--inter-orange); cursor: pointer; margin-left: 8px; font-size: clamp(14px, 3.8vw, 16px); }
+        .add-msg-link { color: var(--inter-orange); font-size: clamp(13px, 3.4vw, 14px); font-weight: 600; cursor: pointer; margin-top: 10px; display: inline-block; }
+        .btn-outras-saidas { background-color: #000; color: #fff; border: none; padding: clamp(5px, 1.3vw, 7px) clamp(12px, 3.2vw, 16px); border-radius: 18px; font-size: clamp(11px, 3vw, 12px); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; }
+        .tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 14px; }
+        .tab { flex: 1; text-align: center; padding: clamp(12px, 3vw, 14px); font-weight: 600; color: var(--text-secondary); cursor: pointer; position: relative; font-size: clamp(14px, 3.8vw, 15px); }
+        .tab.active { color: var(--inter-orange); }
+        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 25%; right: 25%; height: 3px; background-color: var(--inter-orange); border-radius: 3px 3px 0 0; }
+        .filters { display: flex; gap: 8px; padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); overflow-x: auto; scrollbar-width: none; }
+        .filters::-webkit-scrollbar { display: none; }
+        .filter-chip { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: clamp(7px, 1.8vw, 9px) clamp(12px, 3.2vw, 14px); border-radius: 18px; font-size: clamp(12px, 3.2vw, 13px); white-space: nowrap; }
+        .transaction-list { padding: 0 clamp(14px, 3.5vw, 18px); }
+        .transaction-item { background-color: var(--card-bg); padding: clamp(12px, 3vw, 14px); border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        .tx-info h4 { font-size: clamp(13px, 3.4vw, 14px); margin-bottom: 4px; }
+        .tx-info p { font-size: clamp(11px, 2.9vw, 12px); color: var(--text-secondary); }
+        .tx-amount { font-weight: bold; font-size: clamp(13px, 3.4vw, 14px); }
+        .tx-amount.negative { color: #d32f2f; }
+        .tx-amount.positive { color: var(--success-green); }
+        .settings-section { padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); }
+        .settings-card { background-color: var(--card-bg); border-radius: 14px; padding: clamp(14px, 3.5vw, 18px); box-shadow: var(--shadow); margin-bottom: 16px; }
+        .profile-preview { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .profile-img-large { width: clamp(55px, 15vw, 65px); height: clamp(55px, 15vw, 65px); border-radius: 50%; background-color: #ddd; object-fit: cover; flex-shrink: 0; }
+        .form-field { margin-bottom: clamp(12px, 3vw, 14px); }
+        .form-field label { display: block; font-size: clamp(11px, 2.9vw, 12px); color: var(--text-secondary); margin-bottom: 5px; }
+        .form-field input { width: 100%; padding: clamp(10px, 2.8vw, 12px); border-radius: 10px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-primary); font-size: clamp(13px, 3.4vw, 14px); outline: none; }
+        .form-field input:focus { border-color: var(--inter-orange); }
+        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--card-bg); display: flex; justify-content: space-around; padding: clamp(8px, 2vw, 10px) 0 clamp(10px, 2.5vw, 14px); border-top: 1px solid var(--border-color); z-index: 9999; height: var(--nav-height); align-items: center; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: clamp(3px, 0.8vw, 4px); color: var(--text-secondary); font-size: clamp(9px, 2.4vw, 11px); cursor: pointer; width: 25%; }
+        .nav-item i { font-size: clamp(18px, 5vw, 22px); }
+        .nav-item.active { color: var(--inter-orange); }
+        .btn-continuar { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; height: var(--btn-continuar-height); padding: 0 clamp(14px, 3.5vw, 18px); border: none; font-weight: bold; cursor: pointer; font-size: clamp(15px, 4.2vw, 17px); background-color: var(--inter-orange); color: white; z-index: 9998; border-radius: 0; display: block; transition: background-color 0.2s; }
+        .btn-continuar:active:not(:disabled) { background-color: var(--inter-orange-dark); }
+        .btn-continuar:disabled { background-color: var(--btn-disabled); color: #666; cursor: not-allowed; opacity: 0.8; }
+        .btn-full-fixed { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; height: var(--btn-continuar-height); padding: 0 clamp(14px, 3.5vw, 18px); border: none; font-weight: bold; cursor: pointer; font-size: clamp(15px, 4.2vw, 17px); background-color: var(--inter-orange); color: white; z-index: 9998; border-radius: 0; display: none; }
+        .btn-full-fixed:active { background-color: var(--inter-orange-dark); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--inter-orange); color: var(--inter-orange); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(3px); padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal { background-color: var(--card-bg); width: 100%; max-width: 360px; border-radius: 18px; padding: clamp(20px, 5vw, 24px); box-shadow: var(--shadow-strong); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal h3 { margin-bottom: 18px; text-align: center; font-size: clamp(16px, 4.5vw, 18px); }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: clamp(13px, 3.4vw, 14px); color: var(--text-secondary); }
+        .input-group input, .input-group textarea { width: 100%; padding: clamp(11px, 3vw, 13px); border-radius: 10px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-primary); font-size: clamp(14px, 3.8vw, 16px); outline: none; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: clamp(11px, 3vw, 13px); border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: clamp(13px, 3.4vw, 14px); }
+        .btn-cancel { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+        .btn-save { background-color: var(--inter-orange); color: white; }
+        .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--card-bg); border-radius: 22px 22px 0 0; padding: clamp(22px, 5.5vw, 28px) clamp(18px, 4.5vw, 24px) clamp(30px, 7.5vw, 40px); z-index: 10001; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -5px 25px rgba(0,0,0,0.2); text-align: center; max-height: 85vh; overflow-y: auto; }
+        .bottom-sheet.open { transform: translateY(0); }
+        .sheet-handle { width: 40px; height: 4px; background-color: var(--border-color); border-radius: 2px; margin: 0 auto 18px; }
+        .loader-ring-isafe { width: clamp(65px, 18vw, 80px); height: clamp(65px, 18vw, 80px); border: 7px solid var(--input-bg); border-top: 7px solid var(--inter-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .loader-ring-isafe i { color: var(--inter-orange); font-size: clamp(24px, 6.5vw, 30px); position: absolute; }
+        .loader-ring-simple { width: clamp(65px, 18vw, 80px); height: clamp(65px, 18vw, 80px); border: 7px solid var(--input-bg); border-top: 7px solid var(--inter-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 18px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .success-icon { width: clamp(65px, 18vw, 80px); height: clamp(65px, 18vw, 80px); background-color: var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; color: white; font-size: clamp(32px, 9vw, 40px); }
+        #screen-comprovante { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 10002; overflow-y: auto; padding-bottom: 40px; display: none; -webkit-overflow-scrolling: touch; }
+        #screen-comprovante.active { display: block; }
+        .divider-line { height: 1px; background: linear-gradient(to right, transparent, var(--line-color) 10%, var(--line-color) 90%, transparent); margin: 14px 0; border: none; }
+        .inter-logo-png { width: clamp(65px, 20vw, 90px); height: auto; margin: 0 auto 12px; display: block; }
+        .fake-notification { position: fixed; top: -120px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 360px; background-color: rgba(30, 30, 30, 0.97); color: white; padding: clamp(12px, 3vw, 14px); border-radius: 14px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 5px 20px rgba(0,0,0,0.4); transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10003; backdrop-filter: blur(10px); }
+        .fake-notification.show { top: clamp(12px, 3vw, 20px); }
+        .notif-icon { width: clamp(26px, 7vw, 32px); height: clamp(26px, 7vw, 32px); background-color: var(--inter-orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: clamp(12px, 3.2vw, 14px); flex-shrink: 0; }
+        .notif-content h4 { font-size: clamp(12px, 3.2vw, 13px); margin-bottom: 3px; display: flex; justify-content: space-between; }
+        .notif-content p { font-size: clamp(11px, 2.9vw, 12px); opacity: 0.92; line-height: 1.35; }
+        .notif-time { font-size: 11px; opacity: 0.7; font-weight: normal; }
+        .share-toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 12px 22px; border-radius: 22px; font-size: clamp(13px, 3.4vw, 14px); z-index: 10004; display: none; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .share-toast.show { display: flex; animation: fadeIn 0.3s ease; }
+        @media (max-height: 600px) {
+            :root { --header-height: 52px; --nav-height: 54px; --btn-continuar-height: 48px; }
+            .balance-value { font-size: 22px; }
+            .menu-icon { width: 42px; height: 42px; }
+        }
+        @media (min-width: 500px) {
+            main { max-width: 500px; margin: 0 auto; }
+            nav.bottom-nav { max-width: 500px; left: 50%; transform: translateX(-50%); }
+            .btn-continuar, .btn-full-fixed { max-width: 500px; left: 50%; transform: translateX(-50%); }
+        }
+        @supports (-webkit-touch-callout: none) {
+            body { height: -webkit-fill-available; }
+            main { padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+            nav.bottom-nav { padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+        }
+
+        /* ============================================
+           ÁREA DE CAPTURA DO COMPROVANTE (700x1600)
+           ============================================ */
+        #receiptCaptureArea {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 700px;
+            height: 1600px;
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 40px 50px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #receiptCaptureArea .capture-logo {
+            width: 180px;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+        }
+        #receiptCaptureArea .capture-check-container {
+            width: 140px;
+            height: 140px;
+            background-color: #00c853;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+        #receiptCaptureArea .capture-check-container i {
+            color: white;
+            font-size: 70px;
+        }
+        #receiptCaptureArea .capture-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        #receiptCaptureArea .capture-amount {
+            text-align: center;
+            font-size: 52px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+        }
+        #receiptCaptureArea .capture-divider {
+            height: 2px;
+            background: repeating-linear-gradient(to right, #d0d0d0 0, #d0d0d0 8px, transparent 8px, transparent 16px);
+            margin: 30px 0;
+            border: none;
+        }
+        #receiptCaptureArea .capture-section-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin: 30px 0 20px 0;
+        }
+        #receiptCaptureArea .capture-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px dotted #d0d0d0;
+        }
+        #receiptCaptureArea .capture-row:last-child {
+            border-bottom: none;
+        }
+        #receiptCaptureArea .capture-label {
+            font-size: 24px;
+            color: #666666;
+        }
+        #receiptCaptureArea .capture-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: right;
+            max-width: 55%;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div id="fakeNotif" class="fake-notification">
+        <div class="notif-icon"><i class="fas fa-wallet"></i></div>
+        <div class="notif-content">
+            <h4>Pix recebido <span class="notif-time">agora</span></h4>
+            <p>Rodrigo silveira te enviou um Pix de R$ 1.000,00 creditado na sua conta final ***323...</p>
+        </div>
+    </div>
+    <header id="mainHeader">
+        <div class="header-left" id="headerLeft" onclick="navigateTo('config')">
+            <div class="avatar-small" id="headerAvatar">JS</div>
+            <span id="headerName">João Silva</span>
+        </div>
+        <div class="header-icons" id="headerRight">
+            <i class="far fa-question-circle"></i>
+            <i class="far fa-eye" id="toggleBalanceView" onclick="toggleBalanceVisibility()"></i>
+            <i class="fas fa-globe-americas" style="color: #2ecc71;"></i>
+        </div>
+    </header>
+    <main>
+        <div id="screen-inicio" class="screen active">
+            <div class="search-bar"><i class="fas fa-search"></i><span>O que você procura hoje?</span></div>
+            <div class="balance-section" onclick="openModal('modalSaldo')">
+                <div class="balance-label">Saldo</div>
+                <div class="balance-value" id="displayBalance">R$ 5.000,00 <i class="fas fa-chevron-right" style="font-size: 14px; opacity: 0.5;"></i></div>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-action" onclick="navigateTo('pix-menu')"><i class="fab fa-pix"></i> Pix</button>
+                <button class="btn-action">Pagar</button>
+                <button class="btn-action">Cartões</button>
+            </div>
+            <div class="grid-menu">
+                <div class="menu-item"><div class="menu-icon"><i class="fas fa-clock-rotate-left"></i></div><span class="menu-text">Antecipar FGTS</span></div>
+                <div class="menu-item"><div class="menu-icon"><i class="fas fa-hand-holding-dollar"></i></div><span class="menu-text">Empréstimos</span></div>
+                <div class="menu-item"><div class="menu-icon"><i class="fas fa-file-invoice-dollar"></i><span class="badge-new">Até 24x</span></div><span class="menu-text">Parcele sem cartão</span></div>
+                <div class="menu-item"><div class="menu-icon"><i class="fas fa-piggy-bank"></i></div><span class="menu-text">Meu Porquinho</span></div>
+            </div>
+            <div class="feed-card">
+                <div class="feed-header">
+                    <div class="feed-avatar"><i class="fas fa-fan"></i></div>
+                    <div class="feed-info"><h4>Inter BR <i class="fas fa-check-circle verified"></i></h4><span>@interbr · 1d</span></div>
+                </div>
+                <div class="feed-content">QUER GANHAR R$100? Eu te conto como! 💜</div>
+                <div class="feed-actions"><span><i class="far fa-heart"></i> 126</span><span><i class="far fa-comment"></i> 74</span><span><i class="fas fa-retweet"></i> 12</span></div>
+            </div>
+            <div class="coupon-banner">
+                <i class="fas fa-star coupon-star"></i>
+                <div class="coupon-text"><h3>Lista de cupons liberada</h3><p>Pegue e use no Shopping</p><button class="btn-simular">Simular</button></div>
+            </div>
+            <div class="extra-features">
+                <div class="feature-box"><div class="feature-icon">🐷</div><div><div class="feature-title">Meu Porquinho</div><div class="feature-desc">Bora guardar dinheiro?</div></div></div>
+                <div class="feature-box"><div class="feature-icon">🍥</div><div><div class="feature-title">Pontos Loop</div><div class="feature-desc">Acumule pontos Troque por benefícios</div></div></div>
+            </div>
+            <div class="help-center"><div style="width: 30px; height: 30px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px;">💼</div><span style="flex: 1; font-weight: 500; font-size: 13px;">Central de ajuda</span><i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i></div>
+        </div>
+        <div id="screen-pix-menu" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); display: flex; align-items: center; gap: 10px;" onclick="navigateTo('inicio')">
+                <i class="fas fa-arrow-left" style="color: var(--inter-orange); font-size: 18px;"></i><h2 style="font-size: 17px;">Pix</h2>
+            </div>
+            <div class="pix-options">
+                <div class="pix-btn-large" onclick="startPixFlow()"><span>Pagar</span><i class="fas fa-chevron-right" style="color: var(--inter-orange);"></i></div>
+                <div class="pix-btn-large"><span>Receber</span><i class="fas fa-chevron-right" style="color: var(--inter-orange);"></i></div>
+            </div>
+            <div class="pix-grid">
+                <div class="pix-item"><div class="pix-circle"><i class="far fa-credit-card"></i><span class="badge-new" style="top:-6px; right: -8px;">Até 18x</span></div><span class="pix-label">Pix no Crédito</span></div>
+                <div class="pix-item"><div class="pix-circle"><i class="fas fa-key"></i></div><span class="pix-label">Cadastrar chave</span></div>
+                <div class="pix-item"><div class="pix-circle"><i class="fas fa-arrows-rotate"></i><span class="badge-new" style="background:#fff; color:#000; top:-6px; right: -8px;">Novo</span></div><span class="pix-label">Pix Automático</span></div>
+                <div class="pix-item"><div class="pix-circle"><i class="far fa-calendar-plus"></i></div><span class="pix-label">Pix Agendado</span></div>
+                <div class="pix-item"><div class="pix-circle"><i class="far fa-comment-dots"></i></div><span class="pix-label">Ajuda Pix</span></div>
+            </div>
+            <div class="promo-cards">
+                <div class="promo-card" style="background-color: #e3f2fd; color: #0d47a1;"><h4 style="margin-bottom: 4px; font-size: 13px;">Pix no Crédito</h4><p style="font-size: 11px;">Transfira na hora e pague na fatura</p></div>
+                <div class="promo-card" style="background-color: #fff3e0; color: #e65100;"><h4 style="margin-bottom: 4px; font-size: 13px;">Parcele em 18x</h4><div style="display:flex; gap:5px; margin-top:8px;"><i class="far fa-credit-card" style="color: #2ecc71;"></i><button style="background:var(--inter-orange); border:none; color:white; padding: 4px 12px; border-radius: 4px; font-weight:bold; font-size: 11px;">Pagar</button></div></div>
+            </div>
+            <div class="security-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><h4 style="font-size: 14px;">Proteja seu Pix</h4><label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Segurança extra contra roubo por R$ 3,50/mês.</p>
+                <a href="#" style="color: var(--inter-orange); font-size: 12px; font-weight: bold; text-decoration: none;">Saiba mais</a>
+            </div>
+        </div>
+        <div id="screen-pix-destino" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); display: flex; align-items: center; gap: 10px;" onclick="navigateTo('pix-menu')">
+                <i class="fas fa-arrow-left" style="color: var(--inter-orange); font-size: 18px;"></i>
+                <h2 style="font-size: 17px; flex:1; text-align:center; margin-right:20px;">Pagar com chave</h2>
+            </div>
+            <div class="pix-flow-container">
+                <label style="display:flex; justify-content:space-between; font-size:clamp(14px, 3.8vw, 16px); font-weight:bold; margin-bottom:12px;">Para quem você quer pagar?</label>
+                <div class="pix-input-wrapper">
+                    <input type="text" class="pix-input-special" id="pixKeyInput" placeholder="Chave, Pix Copia e Cola ou Favorito">
+                    <button class="btn-colar" id="btnColar" onclick="pastePixKey()">Colar</button>
+                    <i class="fas fa-times btn-clear-input" id="btnClearInput" onclick="clearPixInput()"></i>
+                </div>
+                <div class="list-group">
+                    <div class="list-item"><div class="list-item-left"><i class="far fa-heart icon-left"></i><span>Meus favoritos</span></div><i class="fas fa-chevron-right"></i></div>
+                    <div class="list-item"><div class="list-item-left"><i class="far fa-user icon-left"></i><span>Lista de contatos</span></div><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+            <button class="btn-continuar" id="btnContinuePix" onclick="goToPixValue()" disabled>Continuar</button>
+        </div>
+        <div id="screen-pix-valor" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); display: flex; align-items: center; gap: 10px;" onclick="navigateTo('pix-destino')">
+                <i class="fas fa-arrow-left" style="color: var(--inter-orange); font-size: 18px;"></i><h2 style="font-size: 17px; flex:1; text-align:center; margin-right:20px;">Pagar com Pix</h2>
+            </div>
+            <div class="pix-flow-container pix-confirm-screen">
+                <div style="background:var(--card-bg); padding:clamp(12px, 3vw, 14px); border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:clamp(20px, 5vw, 28px); box-shadow:var(--shadow);">
+                    <span style="font-size:clamp(12px, 3.2vw, 14px); color:var(--text-secondary);">Saldo em conta</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="pixScreenBalance" style="font-weight:bold; font-size:clamp(13px, 3.4vw, 15px);">R$ 5.000,00</span>
+                        <i class="far fa-eye-slash" id="pixEyeIcon" onclick="toggleBalanceVisibility()" style="color:var(--inter-orange); font-size:clamp(15px, 4vw, 17px);"></i>
+                    </div>
+                </div>
+                <input type="text" id="pixAmountInput" style="text-align:center; font-size:clamp(28px, 8.5vw, 34px); font-weight:bold; color:var(--inter-orange); border:none; background:transparent; margin-bottom:10px; width:100%; outline:none;" value="0,00" oninput="formatCurrency(this); checkPixAmount()">
+                <div style="height:2px; background:var(--text-secondary); width:clamp(110px, 30vw, 140px); margin:0 auto clamp(20px, 5vw, 28px);"></div>
+                <p style="font-size:clamp(12px, 3.2vw, 14px); color:var(--text-secondary); margin-bottom:5px;">Pagar para</p>
+                <h3 style="font-size:clamp(14px, 3.8vw, 16px); font-weight:bold; margin-bottom:auto;" id="confirmReceiverName">Destinatário</h3>
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Antes de pagar, confira os dados de quem vai receber e cuidado com golpes.</span>
+                </div>
+            </div>
+            <button class="btn-continuar" id="btnContinueValue" onclick="goToPixDetails()" disabled>Continuar</button>
+        </div>
+        <div id="screen-pix-detalhes" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(10px, 2.5vw, 12px); display: flex; align-items: center; gap: 10px;" onclick="navigateTo('pix-valor')">
+                <i class="fas fa-arrow-left" style="color: var(--inter-orange); font-size: 18px;"></i>
+                <h2 style="font-size: 17px; flex:1; text-align:center; margin-right:40px;">Pagar com Pix</h2>
+                <i class="fas fa-home" style="color:var(--inter-orange); font-size:18px;" onclick="navigateTo('inicio')"></i>
+            </div>
+            <div class="pix-details-screen" style="padding-bottom: clamp(100px, 22vw, 130px);">
+                <div style="text-align:center; margin-bottom:clamp(12px, 3vw, 16px);">
+                    <div style="width:clamp(46px, 13vw, 54px); height:clamp(46px, 13vw, 54px); background:var(--input-bg); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:8px;">
+                        <i class="fas fa-exchange-alt" style="font-size:clamp(20px, 5.5vw, 24px); color:var(--text-secondary); transform: rotate(90deg);"></i>
+                    </div>
+                    <h2 id="detailsAmountDisplay" style="font-size:clamp(24px, 7.5vw, 30px); font-weight:bold;">R$ 0,00</h2>
+                    <p style="font-size:clamp(12px, 3.2vw, 14px); color:var(--text-secondary); margin-top:5px;" id="detailsReceiverName">Destinatário</p>
+                    <button class="btn-outras-saidas">Outras saídas <i class="fas fa-pencil-alt" style="color:#fff; font-size:9px;"></i></button>
+                </div>
+                <div class="section-title">Pagar quando</div>
+                <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; padding:clamp(12px, 3vw, 14px); margin-bottom:clamp(12px, 3vw, 16px);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <i class="far fa-calendar" style="font-size:clamp(17px, 4.5vw, 20px);"></i>
+                            <div><div style="font-weight:bold; font-size:clamp(13px, 3.4vw, 15px);">Agora</div><div style="font-size:clamp(11px, 2.9vw, 12px); color:var(--text-secondary);" id="currentDateDisplay">28/07/2026</div></div>
+                        </div>
+                        <i class="fas fa-pencil-alt edit-icon"></i>
+                    </div>
+                    <div class="divider-line" style="margin:12px 0;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:clamp(12px, 3.2vw, 14px);">Pagamento recorrente</span>
+                        <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                </div>
+                <div class="section-title">Forma de pagamento</div>
+                <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; padding:clamp(12px, 3vw, 14px); margin-bottom:clamp(12px, 3vw, 16px); display:flex; align-items:center; gap:10px;">
+                    <i class="far fa-credit-card" style="color:var(--inter-orange); font-size:clamp(17px, 4.5vw, 20px);"></i>
+                    <span style="font-size:clamp(13px, 3.4vw, 15px);">Débito Inter</span>
+                </div>
+                <div class="section-title">Quem vai receber</div>
+                <div class="detail-row"><span class="detail-label">Nome</span><span class="detail-value" id="recvNameDisplay">-</span></div>
+                <div class="detail-row"><span class="detail-label">CPF/CNPJ</span><span class="detail-value" id="recvCpfDisplay">-</span></div>
+                <div class="detail-row"><span class="detail-label">Instituição</span><span class="detail-value" id="recvInstDisplay">-</span></div>
+                <div class="detail-row">
+                    <div><span class="detail-label">Chave de CPF</span><div style="font-weight:bold; font-size:clamp(12px, 3.2vw, 14px); margin-top:2px;" id="recvKeyDisplay">-</div></div>
+                    <i class="fas fa-pencil-alt edit-icon"></i>
+                </div>
+                <div class="add-msg-link">Adicionar mensagem</div>
+                <div class="divider-line"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:clamp(20px, 5vw, 30px); padding: clamp(8px, 2vw, 12px) 0;">
+                    <div style="display:flex; align-items:center; gap:8px;"><i class="far fa-heart" style="font-size:clamp(15px, 4vw, 17px);"></i><span style="font-weight:500; font-size:clamp(13px, 3.4vw, 15px);">Salvar como favorito</span></div>
+                    <label class="toggle-switch"><input type="checkbox" id="favToggle"><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+        <div id="screen-extrato" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(10px, 2.5vw, 12px); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;" onclick="navigateTo('inicio')">
+                    <i class="fas fa-arrow-left" style="color: var(--text-primary); font-size: 18px;"></i>
+                    <h2 style="font-size: 17px;">Transações</h2>
+                </div>
+                <div style="display: flex; gap: clamp(12px, 3vw, 16px); font-size: clamp(17px, 4.5vw, 20px);">
+                    <i class="far fa-eye-slash"></i>
+                    <i class="fas fa-download"></i>
+                    <i class="fas fa-ellipsis-vertical" onclick="openModal('modalNotif')"></i>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active">Extrato</div>
+                <div class="tab">Agendamentos</div>
+            </div>
+            <div class="search-bar" style="margin-bottom: 14px;"><i class="fas fa-search"></i><span>Pesquisar</span></div>
+            <div class="filters">
+                <div class="filter-chip">Período <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 4px;"></i></div>
+                <div class="filter-chip">Categorias <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 4px;"></i></div>
+                <div class="filter-chip">Tipos de transação</div>
+            </div>
+            <div class="transaction-list" id="transactionList"></div>
+            <div class="empty-state" id="emptyExtrato" style="text-align: center; margin-top: 50px; color: var(--text-secondary); display:none;">
+                <h3 style="font-size:clamp(14px, 3.8vw, 16px);">Nenhuma transação</h3>
+                <p style="font-size:clamp(11px, 2.9vw, 13px);">Toque nos 3 pontos para adicionar</p>
+            </div>
+        </div>
+        <div id="screen-config" class="screen">
+            <div style="padding: 0 clamp(14px, 3.5vw, 18px) clamp(12px, 3vw, 16px); display: flex; align-items: center; gap: 10px;" onclick="navigateTo('inicio')">
+                <i class="fas fa-arrow-left" style="color: var(--text-primary); font-size: 18px;"></i>
+                <h2 style="font-size: 17px;">Configurações de Perfil</h2>
+            </div>
+            <div class="settings-section">
+                <div class="settings-card">
+                    <div class="profile-preview">
+                        <img src="" alt="Profile" class="profile-img-large" id="configProfileImg" style="display:none;">
+                        <div class="profile-img-large" id="configProfilePlaceholder" style="display:flex; align-items:center; justify-content:center; font-size:22px; color:#666;"><i class="fas fa-user"></i></div>
+                        <div style="flex:1;">
+                            <button class="btn-modal btn-save" style="padding:clamp(7px, 1.8vw, 9px) clamp(12px, 3vw, 14px); font-size:clamp(11px, 2.9vw, 12px);" onclick="document.getElementById('fileInput').click()">Alterar Foto</button>
+                            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="loadProfileImage(event)">
+                        </div>
+                    </div>
+                    <div class="form-field"><label>Nome Completo</label><input type="text" id="cfgName" placeholder="Seu nome"></div>
+                    <div class="form-field"><label>CPF (Remetente)</label><input type="text" id="cfgCpf" placeholder="***.000.000-**"></div>
+                    <div class="form-field"><label>Instituição (Remetente)</label><input type="text" id="cfgInst" placeholder="Banco"></div>
+                    <hr style="border:0; border-top:1px solid var(--border-color); margin:clamp(14px, 3.5vw, 18px) 0;">
+                    <div class="form-field"><label>Nome Destinatário Padrão</label><input type="text" id="cfgRecvName" placeholder="Nome do destinatário"></div>
+                    <div class="form-field"><label>CPF Destinatário</label><input type="text" id="cfgRecvCpf" placeholder="***.000.000-**"></div>
+                    <div class="form-field"><label>Instituição Destinatário</label><input type="text" id="cfgRecvInst" placeholder="Banco"></div>
+                    <div class="form-field"><label>Chave Pix Destinatário</label><input type="text" id="cfgRecvKey" placeholder="Chave Pix"></div>
+                    <button class="btn-continuar" style="position:static; margin-top:10px;" onclick="saveSettings()">Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navigateTo('inicio', this)"><i class="fas fa-home"></i><span>Início</span></div>
+        <div class="nav-item" onclick="navigateTo('extrato', this)"><i class="fas fa-chart-line"></i><span>Invest</span></div>
+        <div class="nav-item"><i class="fas fa-shopping-cart"></i><span>Shop</span></div>
+        <div class="nav-item"><i class="fas fa-th-large"></i><span>Todos</span></div>
+    </nav>
+    <button class="btn-full-fixed" id="btnPayFinal" onclick="startISafeAuth()">Pagar R$ 0,00</button>
+    <div id="modalSaldo" class="modal-overlay">
+        <div class="modal">
+            <h3>Alterar Saldo</h3>
+            <div class="input-group"><label>Novo valor:</label><input type="text" id="inputSaldo" value="5.000,00" oninput="formatCurrency(this)"></div>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-cancel" onclick="closeModal('modalSaldo')">Cancelar</button>
+                <button class="btn-modal btn-save" onclick="saveBalance()">Salvar</button>
+            </div>
+        </div>
+    </div>
+    <div id="modalNotif" class="modal-overlay">
+        <div class="modal">
+            <h3>Enviar Notificação PIX</h3>
+            <div class="input-group"><label>Título:</label><input type="text" value="Pix recebido"></div>
+            <div class="input-group"><label>Mensagem:</label><textarea rows="3">Rodrigo silveira te enviou um Pix de R$ 1.000,00 creditado na sua conta final ***323...</textarea></div>
+            <div class="input-group"><label>Agendar para (segundos):</label><input type="number" id="notifDelay" value="5"></div>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-cancel" onclick="closeModal('modalNotif')">Cancelar</button>
+                <button class="btn-modal btn-save" onclick="scheduleNotification()">Agendar</button>
+            </div>
+        </div>
+    </div>
+    <div id="sheetISafe" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div id="isafeContent">
+            <div class="loader-ring-isafe" id="isafeLoader" style="display:none;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 style="margin-bottom:10px; font-size:clamp(15px, 4vw, 17px);" id="isafeTitle">Clique em confirmar para autenticar sua transação pelo iSafe</h3>
+            <p style="color:var(--text-secondary); font-size:clamp(13px, 3.4vw, 14px); display:none;" id="isafeText">Autenticando...</p>
+            <button class="btn-continuar" id="btnConfirmISafe" style="position:static; margin-top:18px;" onclick="confirmISafe()">CONFIRMAR</button>
+        </div>
+    </div>
+    <div id="sheetProcessing" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="loader-ring-simple"></div>
+        <h3 style="font-size:clamp(15px, 4vw, 17px);">Processando o Pix</h3>
+        <p style="color:var(--text-secondary); font-size:clamp(13px, 3.4vw, 14px); margin-top:10px;">Aguarde enquanto a transação é processada.</p>
+    </div>
+    <div id="sheetSuccessMsg" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <h3 style="text-align:left; margin-bottom:10px; font-size:clamp(15px, 4vw, 17px);">Pix enviado</h3>
+        <p style="color:var(--text-secondary); font-size:clamp(13px, 3.4vw, 14px); text-align:left; margin-bottom:18px; line-height:1.4;">Você fez um Pix no valor de <span id="successMsgAmount">R$ 0,00</span> para <span id="successMsgName">Destinatário</span>.</p>
+        <button class="btn-continuar" style="position:static;" onclick="showReceipt()">OK</button>
+    </div>
+
+    <!-- COMPROVANTE VISUAL (tela do app) -->
+    <div id="screen-comprovante" class="screen">
+        <div style="padding: clamp(14px, 3.5vw, 16px) clamp(14px, 3.5vw, 18px); display: flex; justify-content: space-between; align-items: center;">
+            <i class="fas fa-arrow-left" style="color: var(--inter-orange); font-size: 18px; cursor:pointer;" onclick="closeReceipt()"></i>
+            <h2 style="font-size: 17px;">Comprovante</h2>
+            <i class="fas fa-home" style="color: var(--inter-orange); font-size: 18px; cursor:pointer;" onclick="navigateTo('inicio'); closeReceipt();"></i>
+        </div>
+        <div style="text-align:center; padding: clamp(14px, 3.5vw, 18px) clamp(14px, 3.5vw, 18px);">
+            <img src="imagens/inter-logo.png" alt="Inter" class="inter-logo-png" onerror="this.style.display='none'">
+            <div class="success-icon" style="margin-top:12px;"><i class="fas fa-check"></i></div>
+            <h2 style="font-size:clamp(17px, 4.5vw, 20px); margin-bottom:5px;">Pix enviado</h2>
+            <h1 id="receiptAmount" style="font-size:clamp(24px, 7vw, 28px); font-weight:bold;">R$ 0,00</h1>
+        </div>
+        <div style="padding: 0 clamp(14px, 3.5vw, 18px);" id="receiptContent">
+            <div class="divider-line"></div>
+            <h3 class="section-title">Sobre a transação</h3>
+            <div class="detail-row"><span class="detail-label">Data do pagamento</span><span class="detail-value" id="receiptDate">-</span></div>
+            <div class="detail-row"><span class="detail-label">Horário</span><span class="detail-value" id="receiptTime">-</span></div>
+            <div class="detail-row"><span class="detail-label">ID da transação</span><span class="detail-value" style="font-size:clamp(10px, 2.7vw, 12px);" id="receiptTxId">-</span></div>
+            <div class="divider-line"></div>
+            <h3 class="section-title">Quem recebeu</h3>
+            <div class="detail-row"><span class="detail-label">Nome</span><span class="detail-value" id="receiptRecvName">-</span></div>
+            <div class="detail-row"><span class="detail-label">CPF/CNPJ</span><span class="detail-value" id="receiptRecvCpf">-</span></div>
+            <div class="detail-row"><span class="detail-label">Instituição</span><span class="detail-value" id="receiptRecvInst">-</span></div>
+            <div class="divider-line"></div>
+            <h3 class="section-title">Quem pagou</h3>
+            <div class="detail-row"><span class="detail-label">Nome</span><span class="detail-value" id="receiptSenderName">-</span></div>
+            <div class="detail-row"><span class="detail-label">CPF/CNPJ</span><span class="detail-value" id="receiptSenderCpf">-</span></div>
+            <div class="detail-row"><span class="detail-label">Instituição</span><span class="detail-value" id="receiptSenderInst">-</span></div>
+            <div class="warning-box" style="margin-top:clamp(16px, 4vw, 22px);">
+                <i class="fas fa-exclamation-circle"></i>
+                <div><strong>Acompanhe suas transações</strong><br>Confira pagamentos, agendamentos e 2ª via do seu comprovante no seu extrato</div>
+            </div>
+            <button class="btn-continuar" style="position:static; margin-top:clamp(14px, 3.5vw, 18px);" onclick="shareReceipt()">
+                <i class="fas fa-share-alt" style="margin-right:8px;"></i>Compartilhar comprovante
+            </button>
+            <button class="btn-continuar btn-outline" style="position:static; margin-top:10px;" onclick="navigateTo('inicio'); closeReceipt();">Realizar novo Pix</button>
+        </div>
+    </div>
+
+    <!-- ÁREA DE CAPTURA OCULTA (700x1600) - SEM BOTÕES -->
+    <div id="receiptCaptureArea">
+        <img src="imagens/inter-logo.png" alt="Inter" class="capture-logo" crossorigin="anonymous">
+        <div class="capture-check-container">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="capture-title">Pix enviado</div>
+        <div class="capture-amount" id="captureAmount">R$ 0,00</div>
+        <div class="capture-divider"></div>
+        <div class="capture-section-title">Sobre a transação</div>
+        <div class="capture-row"><span class="capture-label">Data do pagamento</span><span class="capture-value" id="captureDate">-</span></div>
+        <div class="capture-row"><span class="capture-label">Horário</span><span class="capture-value" id="captureTime">-</span></div>
+        <div class="capture-row"><span class="capture-label">ID da transação</span><span class="capture-value" id="captureTxId" style="font-size:18px;">-</span></div>
+        <div class="capture-divider"></div>
+        <div class="capture-section-title">Quem recebeu</div>
+        <div class="capture-row"><span class="capture-label">Nome</span><span class="capture-value" id="captureRecvName">-</span></div>
+        <div class="capture-row"><span class="capture-label">CPF/CNPJ</span><span class="capture-value" id="captureRecvCpf">-</span></div>
+        <div class="capture-row"><span class="capture-label">Instituição</span><span class="capture-value" id="captureRecvInst">-</span></div>
+        <div class="capture-divider"></div>
+        <div class="capture-section-title">Quem pagou</div>
+        <div class="capture-row"><span class="capture-label">Nome</span><span class="capture-value" id="captureSenderName">-</span></div>
+        <div class="capture-row"><span class="capture-label">CPF/CNPJ</span><span class="capture-value" id="captureSenderCpf">-</span></div>
+        <div class="capture-row"><span class="capture-label">Instituição</span><span class="capture-value" id="captureSenderInst">-</span></div>
+    </div>
+
+    <div id="shareToast" class="share-toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="shareToastMsg">Comprovante compartilhado!</span>
+    </div>
+    <script>
+        let currentBalance = 5000.00;
+        let isBalanceHidden = false;
+        let transactions = [];
+        let userProfile = { name: "", cpf: "", inst: "", recvName: "", recvCpf: "", recvInst: "", recvKey: "", photo: null };
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('interUserProfile');
+                if (saved) { const parsed = JSON.parse(saved); userProfile = { ...userProfile, ...parsed }; }
+                const savedBalance = localStorage.getItem('interBalance');
+                if (savedBalance !== null) currentBalance = parseFloat(savedBalance);
+            } catch(e) { console.log('Erro ao carregar:', e); }
+        }
+        function saveToStorage() {
+            try {
+                localStorage.setItem('interUserProfile', JSON.stringify(userProfile));
+                localStorage.setItem('interBalance', currentBalance.toString());
+            } catch(e) { console.log('Erro ao salvar:', e); }
+        }
+        loadFromStorage();
+        document.addEventListener('DOMContentLoaded', function() {
+            const pixKeyInput = document.getElementById('pixKeyInput');
+            if (pixKeyInput) pixKeyInput.addEventListener('input', checkPixInput);
+            updateDisplayBalance();
+            renderTransactions();
+            loadSettingsToForm();
+        });
+        function formatCurrency(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = (parseInt(value || '0') / 100).toFixed(2);
+            value = value.replace('.', ',');
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+            input.value = value;
+        }
+        function parseCurrency(str) { return parseFloat(str.replace(/\./g, '').replace(',', '.')); }
+        function updateDisplayBalance() {
+            const formatted = currentBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const displayEl = document.getElementById('displayBalance');
+            const pixScreenBal = document.getElementById('pixScreenBalance');
+            const pixEye = document.getElementById('pixEyeIcon');
+            if (isBalanceHidden) {
+                displayEl.innerHTML = 'R$ ••••• <i class="fas fa-chevron-right" style="font-size: 14px; opacity: 0.5;"></i>';
+                pixScreenBal.innerText = 'R$ •••••';
+                if (pixEye) pixEye.className = 'fas fa-eye-slash';
+            } else {
+                displayEl.innerHTML = `${formatted} <i class="fas fa-chevron-right" style="font-size: 14px; opacity: 0.5;"></i>`;
+                pixScreenBal.innerText = formatted;
+                if (pixEye) pixEye.className = 'far fa-eye';
+            }
+        }
+        function toggleBalanceVisibility() { isBalanceHidden = !isBalanceHidden; updateDisplayBalance(); }
+        function navigateTo(screenId, navItem = null) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(`screen-${screenId}`);
+            if(target) target.classList.add('active');
+            if (navItem) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                navItem.classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                if(screenId === 'inicio') document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+                if(screenId === 'extrato') document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            }
+            document.querySelector('main').scrollTop = 0;
+            if(screenId !== 'pix-detalhes') document.getElementById('btnPayFinal').style.display = 'none';
+        }
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+            if(id === 'modalSaldo') document.getElementById('inputSaldo').value = currentBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function saveBalance() {
+            currentBalance = parseCurrency(document.getElementById('inputSaldo').value);
+            updateDisplayBalance();
+            saveToStorage();
+            closeModal('modalSaldo');
+        }
+        function startPixFlow() { navigateTo('pix-destino'); document.getElementById('pixKeyInput').value = ''; checkPixInput(); }
+        function checkPixInput() {
+            const input = document.getElementById('pixKeyInput');
+            const btnColar = document.getElementById('btnColar');
+            const btnClear = document.getElementById('btnClearInput');
+            const btnContinue = document.getElementById('btnContinuePix');
+            if (!input || !btnContinue) return;
+            const hasValue = input.value.trim() !== '';
+            if (btnColar) btnColar.style.display = hasValue ? 'none' : 'block';
+            if (btnClear) btnClear.style.display = hasValue ? 'block' : 'none';
+            btnContinue.disabled = !hasValue;
+        }
+        function clearPixInput() { const input = document.getElementById('pixKeyInput'); if (input) { input.value = ''; checkPixInput(); } }
+        function pastePixKey() { const input = document.getElementById('pixKeyInput'); if (input) { input.value = userProfile.recvKey || ''; checkPixInput(); } }
+        function goToPixValue() {
+            const key = document.getElementById('pixKeyInput').value;
+            let receiverName = "Destinatário Desconhecido";
+            if(userProfile.recvName && (key.includes(userProfile.recvKey) || key === userProfile.recvName)) receiverName = userProfile.recvName;
+            else if (key) receiverName = "Contato " + key.substring(0, 5) + "...";
+            document.getElementById('confirmReceiverName').innerText = receiverName;
+            navigateTo('pix-valor');
+        }
+        function checkPixAmount() { const val = parseCurrency(document.getElementById('pixAmountInput').value); const btn = document.getElementById('btnContinueValue'); if (btn) btn.disabled = val <= 0; }
+        function goToPixDetails() {
+            const amount = document.getElementById('pixAmountInput').value;
+            document.getElementById('detailsAmountDisplay').innerText = `R$ ${amount}`;
+            const btnFixed = document.getElementById('btnPayFinal');
+            btnFixed.innerText = `Pagar R$ ${amount}`;
+            btnFixed.style.display = 'block';
+            const recvName = userProfile.recvName || "Destinatário";
+            document.getElementById('recvNameDisplay').innerText = recvName;
+            document.getElementById('recvCpfDisplay').innerText = userProfile.recvCpf || "***.000.000-**";
+            document.getElementById('recvInstDisplay').innerText = userProfile.recvInst || "-";
+            document.getElementById('recvKeyDisplay').innerText = userProfile.recvKey || "-";
+            document.getElementById('detailsReceiverName').innerText = recvName;
+            const now = new Date();
+            document.getElementById('currentDateDisplay').innerText = now.toLocaleDateString('pt-BR');
+            navigateTo('pix-detalhes');
+        }
+        function startISafeAuth() {
+            const sheet = document.getElementById('sheetISafe');
+            const loader = document.getElementById('isafeLoader');
+            const title = document.getElementById('isafeTitle');
+            const text = document.getElementById('isafeText');
+            const btn = document.getElementById('btnConfirmISafe');
+            loader.style.display = 'none';
+            title.innerText = 'Clique em confirmar para autenticar sua transação pelo iSafe';
+            title.style.display = 'block';
+            text.style.display = 'none';
+            btn.style.display = 'block';
+            sheet.classList.add('open');
+        }
+        function confirmISafe() {
+            const loader = document.getElementById('isafeLoader');
+            const title = document.getElementById('isafeTitle');
+            const text = document.getElementById('isafeText');
+            const btn = document.getElementById('btnConfirmISafe');
+            btn.style.display = 'none';
+            title.style.display = 'none';
+            text.innerText = 'Autenticando...';
+            text.style.display = 'block';
+            loader.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('sheetISafe').classList.remove('open');
+                const sheetProc = document.getElementById('sheetProcessing');
+                sheetProc.classList.add('open');
+                setTimeout(() => {
+                    sheetProc.classList.remove('open');
+                    const amountVal = parseCurrency(document.getElementById('pixAmountInput').value);
+                    currentBalance -= amountVal;
+                    updateDisplayBalance();
+                    saveToStorage();
+                    const recvName = userProfile.recvName || "Destinatário";
+                    addTransaction("Pix enviado", `Para: ${recvName}`, -amountVal);
+                    document.getElementById('successMsgAmount').innerText = `R$ ${document.getElementById('pixAmountInput').value}`;
+                    document.getElementById('successMsgName').innerText = recvName;
+                    document.getElementById('sheetSuccessMsg').classList.add('open');
+                }, 3000);
+            }, 2500);
+        }
+        function showReceipt() {
+            document.getElementById('sheetSuccessMsg').classList.remove('open');
+            document.getElementById('btnPayFinal').style.display = 'none';
+            const now = new Date();
+            const days = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+            const dateStr = `${days[now.getDay()]}, ${now.toLocaleDateString('pt-BR')}`;
+            const timeStr = `${now.getHours()}h${now.getMinutes().toString().padStart(2,'0')}`;
+            const txId = crypto.randomUUID ? crypto.randomUUID() : 'tx-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9);
+            const amount = `R$ ${document.getElementById('pixAmountInput').value}`;
+            const recvName = userProfile.recvName || "Destinatário";
+            const recvCpf = userProfile.recvCpf || "***.000.000-**";
+            const recvInst = userProfile.recvInst || "-";
+            const senderName = userProfile.name || "Usuário";
+            const senderCpf = userProfile.cpf || "***.000.000-**";
+            const senderInst = userProfile.inst || "Banco Inter S.A.";
+            
+            // Preenche tela do comprovante
+            document.getElementById('receiptDate').innerText = dateStr;
+            document.getElementById('receiptTime').innerText = timeStr;
+            document.getElementById('receiptTxId').innerText = txId;
+            document.getElementById('receiptAmount').innerText = amount;
+            document.getElementById('receiptRecvName').innerText = recvName;
+            document.getElementById('receiptRecvCpf').innerText = recvCpf;
+            document.getElementById('receiptRecvInst').innerText = recvInst;
+            document.getElementById('receiptSenderName').innerText = senderName;
+            document.getElementById('receiptSenderCpf').innerText = senderCpf;
+            document.getElementById('receiptSenderInst').innerText = senderInst;
+            
+            // Preenche área de captura (700x1600)
+            document.getElementById('captureDate').innerText = dateStr;
+            document.getElementById('captureTime').innerText = timeStr;
+            document.getElementById('captureTxId').innerText = txId;
+            document.getElementById('captureAmount').innerText = amount;
+            document.getElementById('captureRecvName').innerText = recvName;
+            document.getElementById('captureRecvCpf').innerText = recvCpf;
+            document.getElementById('captureRecvInst').innerText = recvInst;
+            document.getElementById('captureSenderName').innerText = senderName;
+            document.getElementById('captureSenderCpf').innerText = senderCpf;
+            document.getElementById('captureSenderInst').innerText = senderInst;
+            
+            document.getElementById('screen-comprovante').classList.add('active');
+        }
+        function closeReceipt() { document.getElementById('screen-comprovante').classList.remove('active'); }
+        
+        async function shareReceipt() {
+            const captureEl = document.getElementById('receiptCaptureArea');
+            
+            // Verifica se html2canvas está carregado
+            if (typeof html2canvas === 'undefined') {
+                showToast('Carregando biblioteca...');
+                // Aguarda um pouco e tenta novamente
+                setTimeout(() => shareReceipt(), 1000);
+                return;
+            }
+            
+            try {
+                showToast('Gerando comprovante...');
+                
+                // Aguarda a imagem do logo carregar completamente
+                const logoImg = captureEl.querySelector('.capture-logo');
+                if (logoImg && !logoImg.complete) {
+                    await new Promise((resolve) => {
+                        logoImg.onload = resolve;
+                        logoImg.onerror = () => {
+                            console.warn('Logo não carregou, continuando sem ela');
+                            resolve();
+                        };
+                        // Timeout de 2 segundos
+                        setTimeout(resolve, 2000);
+                    });
+                }
+                
+                // Captura otimizada
+                const canvas = await html2canvas(captureEl, {
+                    backgroundColor: '#f5f5f5',
+                    scale: 1,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    width: 700,
+                    height: 1600,
+                    windowWidth: 700,
+                    windowHeight: 1600,
+                    imageTimeout: 5000, // Timeout de 5s para imagens
+                    onclone: (clonedDoc) => {
+                        // Garante que todos os elementos estejam visíveis no clone
+                        const clonedCapture = clonedDoc.getElementById('receiptCaptureArea');
+                        if (clonedCapture) {
+                            clonedCapture.style.display = 'block';
+                            clonedCapture.style.position = 'relative';
+                            clonedCapture.style.top = '0';
+                            clonedCapture.style.left = '0';
+                        }
+                    }
+                });
+                
+                showToast('Salvando...');
+                
+                // Converte para blob JPG
+                canvas.toBlob(function(blob) {
+                    if (!blob) { 
+                        alert('Erro ao gerar imagem'); 
+                        return; 
+                    }
+                    
+                    const fileName = `comprovante-pix-${Date.now()}.jpg`;
+                    
+                    // Tenta compartilhar via Web Share API
+                    if (navigator.share && navigator.canShare) {
+                        const file = new File([blob], fileName, { type: 'image/jpeg' });
+                        if (navigator.canShare({ files: [file] })) {
+                            navigator.share({ 
+                                files: [file], 
+                                title: 'Comprovante Pix', 
+                                text: 'Comprovante de transferência Pix' 
+                            }).then(() => {
+                                showToast('Compartilhado com sucesso!');
+                            }).catch((err) => {
+                                if (err.name !== 'AbortError') {
+                                    console.error('Erro ao compartilhar:', err);
+                                    downloadFallback(blob, fileName);
+                                }
+                            });
+                            return;
+                        }
+                    }
+                    
+                    // Fallback: download direto
+                    downloadFallback(blob, fileName);
+                    
+                }, 'image/jpeg', 0.92); // Qualidade 92% para balancear tamanho/qualidade
+                
+            } catch(err) { 
+                console.error('Erro ao gerar comprovante:', err); 
+                showToast('Erro ao gerar. Tentando novamente...');
+                // Tenta uma segunda vez após 1 segundo
+                setTimeout(() => {
+                    try {
+                        shareReceipt();
+                    } catch(e) {
+                        alert('Não foi possível gerar o comprovante. Tente novamente.');
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Função de download otimizada
+        function downloadFallback(blob, fileName) {
+            // Cria URL do blob
+            const url = URL.createObjectURL(blob);
+            
+            // Cria link temporário
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.style.display = 'none';
+            
+            // Adiciona ao DOM
+            document.body.appendChild(link);
+            
+            // Força o clique
+            link.click();
+            
+            // Remove do DOM após um pequeno delay
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToast('Comprovante salvo!');
+            }, 100);
+        }
+        
+        function showToast(msg) {
+            const toast = document.getElementById('shareToast');
+            const toastMsg = document.getElementById('shareToastMsg');
+            if (toastMsg) {
+                toastMsg.innerText = msg;
+            }
+            if (toast) {
+                toast.classList.add('show');
+                // Remove após 3 segundos
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+        
+        function addTransaction(title, desc, amount) { transactions.unshift({ title, desc, amount, date: new Date() }); renderTransactions(); }
+        function renderTransactions() {
+            const list = document.getElementById('transactionList');
+            const empty = document.getElementById('emptyExtrato');
+            list.innerHTML = '';
+            if (transactions.length === 0) { empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            transactions.forEach(tx => {
+                const isNeg = tx.amount < 0;
+                const formattedAmt = Math.abs(tx.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const sign = isNeg ? '-' : '+';
+                const colorClass = isNeg ? 'negative' : 'positive';
+                const div = document.createElement('div');
+                div.className = 'transaction-item';
+                div.innerHTML = `<div class="tx-info"><h4>${tx.title}</h4><p>${tx.desc}</p></div><div class="tx-amount ${colorClass}">${sign} ${formattedAmt}</div>`;
+                list.appendChild(div);
+            });
+        }
+        function loadProfileImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userProfile.photo = e.target.result;
+                    document.getElementById('configProfileImg').src = e.target.result;
+                    document.getElementById('configProfileImg').style.display = 'block';
+                    document.getElementById('configProfilePlaceholder').style.display = 'none';
+                    document.getElementById('headerAvatar').innerHTML = `<img src="${e.target.result}" alt="Foto">`;
+                    saveToStorage();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        function loadSettingsToForm() {
+            document.getElementById('cfgName').value = userProfile.name || '';
+            document.getElementById('cfgCpf').value = userProfile.cpf || '';
+            document.getElementById('cfgInst').value = userProfile.inst || '';
+            document.getElementById('cfgRecvName').value = userProfile.recvName || '';
+            document.getElementById('cfgRecvCpf').value = userProfile.recvCpf || '';
+            document.getElementById('cfgRecvInst').value = userProfile.recvInst || '';
+            document.getElementById('cfgRecvKey').value = userProfile.recvKey || '';
+            if (userProfile.name) document.getElementById('headerName').innerText = userProfile.name;
+            if (userProfile.photo) {
+                document.getElementById('configProfileImg').src = userProfile.photo;
+                document.getElementById('configProfileImg').style.display = 'block';
+                document.getElementById('configProfilePlaceholder').style.display = 'none';
+                document.getElementById('headerAvatar').innerHTML = `<img src="${userProfile.photo}" alt="Foto">`;
+            }
+        }
+        function saveSettings() {
+            userProfile.name = document.getElementById('cfgName').value;
+            userProfile.cpf = document.getElementById('cfgCpf').value;
+            userProfile.inst = document.getElementById('cfgInst').value;
+            userProfile.recvName = document.getElementById('cfgRecvName').value;
+            userProfile.recvCpf = document.getElementById('cfgRecvCpf').value;
+            userProfile.recvInst = document.getElementById('cfgRecvInst').value;
+            userProfile.recvKey = document.getElementById('cfgRecvKey').value;
+            document.getElementById('headerName').innerText = userProfile.name || 'Usuário';
+            saveToStorage();
+            showToast('Configurações salvas!');
+            navigateTo('inicio');
+        }
+        function scheduleNotification() {
+            const delaySec = parseInt(document.getElementById('notifDelay').value) || 5;
+            closeModal('modalNotif');
+            setTimeout(() => {
+                const notif = document.getElementById('fakeNotif');
+                notif.classList.add('show');
+                setTimeout(() => notif.classList.remove('show'), 4000);
+            }, delaySec * 1000);
+        }
+        window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.classList.remove('open'); }
+    </script>
+</body>
+</html>
